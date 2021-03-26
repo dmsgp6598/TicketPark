@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+       
+<tiles-definitions>
+  <definition name="default" template="/WEB-INF/layout/layout.jsp">
+  <put-attribute name="header" value="/WEB-INF/layout/header.jsp" />
+  <put-attribute name="body" value="/WEB-INF/layout/mainTest.jsp" />
+  <put-attribute name="footer" value="/WEB-INF/layout/footer.jsp" />
+  </definition>
+  
+  <definition name="default2" template="/WEB-INF/layout/layout.jsp">
+  <put-attribute name="header" value="/WEB-INF/layout/header2.jsp" />
+  <put-attribute name="body" value="/WEB-INF/layout/mainTest.jsp" />
+  <put-attribute name="footer" value="/WEB-INF/layout/footer.jsp" />
+  </definition>
+  
+  <definition name="default3" template="/WEB-INF/layout/layout2.jsp">
+  <put-attribute name="header" value="/WEB-INF/layout/header2.jsp" />
+  <put-attribute name="body" value="/WEB-INF/layout/mainTest.jsp" />
+  <put-attribute name="body2" value="/WEB-INF/layout/mainTest.jsp" />
+  <put-attribute name="footer" value="/WEB-INF/layout/footer.jsp" />
+  </definition>
+  
+  
+  <definition name="joinForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/join/joinForm.jsp" />
+   </definition>
+   
+   <definition name="loginForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/member/loginForm.jsp" />
+   </definition>
+   
+   <definition name="logout" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/member/logout.jsp" />
+   </definition>
+   <definition name="/join/joinConfirm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/join/joinConfirm.jsp" />
+   </definition>
+   
+   
+   <definition name="main" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/main.jsp" />
+   </definition>
+   <definition name="/main/musical_new" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/musical_new.jsp" />
+   </definition>
+   <definition name="/main/musical_hot" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/musical_hot.jsp" />
+   </definition>
+   <definition name="/main/concert_new" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/concert_new.jsp" />
+   </definition>
+   <definition name="/main/concert_hot" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/concert_hot.jsp" />
+   </definition>
+   <definition name="/main/exhibition_new" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/exhibition_new.jsp" />
+   </definition>
+   <definition name="/main/exhibition_hot" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/exhibition_hot.jsp" />
+   </definition>
+   <definition name="/main/festival_new" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/festival_new.jsp" />
+   </definition>
+   <definition name="/main/festival_hot" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/festival_hot.jsp" />
+   </definition>
+   <definition name="/main/searchList" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/main/searchList.jsp" />
+   </definition>
+     
+   
+   <definition name="/mypage/resList" extends="default3">
+      <put-attribute name="body" value="/WEB-INF/views/my/nowReslist.jsp" />
+      <put-attribute name="body2" value="/WEB-INF/views/my/pastReslist.jsp" />
+   </definition>
+   <definition name="/mypage/memDetail" extends="default2">
+      <put-attribute name="body" value="/WEB-INF/views/my/memDetail.jsp" />
+   </definition> 
+	<definition name="/mypage/memberModifyForm" extends="default2">
+      <put-attribute name="body" value="/WEB-INF/views/my/memberModifyForm.jsp" />
+   </definition>
+   <definition name="/mypage/memberDeleteForm" extends="default2">
+      <put-attribute name="body" value="/WEB-INF/views/my/memberDeleteForm.jsp" />
+   </definition> 
+   <definition name="/mypage/memberDelete" extends="default2">
+      <put-attribute name="body" value="/WEB-INF/views/my/memberDelete.jsp" />
+   </definition>
+   <definition name="/mypage/myQnaList" extends="default2">
+      <put-attribute name="body" value="/WEB-INF/views/my/qnaList.jsp" />
+   </definition>
+     <definition name="/mypage/qnaWriteForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/my/qnaWriteForm.jsp" />
+   </definition>
+   <definition name="/mypage/qnaDetail" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/my/qnaDetail.jsp" />
+   </definition>
+   <definition name="/mypage/qnaModifyForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/my/qnaModifyForm.jsp" />
+   </definition>
+   <definition name="/mypage/likeList" extends="default2">
+      <put-attribute name="body" value="/WEB-INF/views/my/likeList.jsp" />
+   </definition> 
+   <definition name="/mypage/reviewList" extends="default2">
+      <put-attribute name="body" value="/WEB-INF/views/my/reviewList.jsp" />
+   </definition> 
+   
+   
+   
+   <definition name="/cos/noticeList" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/cos/noticeList.jsp" />
+   </definition>
+   <definition name="/cos/noticeDetail" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/cos/noticeDetail.jsp" />
+   </definition>
+   <definition name="/cos/noticeWriteForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/cos/noticeWriteForm.jsp" />
+   </definition>
+   <definition name="/cos/noticeModifyForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/cos/noticeModifyForm.jsp" />
+   </definition>
+   <definition name="/cos/faqList" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/cos/faqList.jsp" />
+   </definition>
+   <definition name="/cos/faqDetail" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/cos/faqDetail.jsp" />
+   </definition>
+   <definition name="/cos/faqWriteForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/cos/faqWriteForm.jsp" />
+   </definition>
+   <definition name="/cos/faqModifyForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/cos/faqModifyForm.jsp" />
+   </definition>
+   
+   
+   <definition name="/adminMem/memberList" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/adminMem/memberList.jsp" />
+   </definition>
+   <definition name="/adminMem/banList" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/adminMem/banList.jsp" />
+   </definition>
+   <definition name="/adminMem/qnaList" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/adminMem/qnaList.jsp" />
+   </definition>
+   <definition name="/adminMem/qnaReForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/adminMem/qnaReForm.jsp" />
+   </definition>
+   <definition name="/adminMem/qnaDetail" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/adminMem/qnaDetail.jsp" />
+   </definition>
+   
+   
+   <definition name="/adminShow/resMemberList" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/adminShow/resMemberList.jsp" />
+   </definition>
+   <definition name="/adminShow/showList" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/adminShow/showList.jsp" />
+   </definition>
+   <definition name="/adminShow/showWriteForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/adminShow/showWriteForm.jsp" />
+   </definition>
+
+	 <definition name="/member/findId" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/member/findId.jsp" />
+   </definition>
+   <definition name="/member/findIdForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/member/findIdForm.jsp" />
+   </definition>
+   <definition name="/member/findPw" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/member/findPw.jsp" />
+   </definition>
+   
+   <definition name="/showDetail/showDetail" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/showDetail/showDetail.jsp" />
+   </definition>
+   <definition name="/showDetail/qnaDetail" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/showDetail/qnaDetail.jsp" />
+   </definition>
+   <definition name="/showDetail/qnaWriteForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/showDetail/qnaWriteForm.jsp" />
+   </definition>
+   <definition name="/showDetail/qnaModifyForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/showDetail/qnaModifyForm.jsp" />
+   </definition>
+   
+   <definition name="/pay/resForm" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/pay/resForm.jsp" />
+   </definition>
+   <definition name="/pay/result" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/pay/result.jsp" />
+   </definition>
+   
+   
+</tiles-definitions>

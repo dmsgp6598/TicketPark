@@ -1,0 +1,1422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ticket_query">
+	<select id="selectpw" parameterType="hashmap" resultType="hashmap">
+      <![CDATA[
+         SELECT
+            MEM_NUM,                              
+            MEM_NAME,                              
+            MEM_ID,                              
+            MEM_PWD,                              
+            MEM_EMAIL,                              
+            MEM_PHONE,                              
+            MEM_BAN,                              
+            MEM_STACK,                              
+            MEM_DATE,                              
+            MEM_ADMIN,
+            MEM_VERIFY
+         FROM TP_MEMBER
+         WHERE MEM_ID = #{MEM_ID}      
+      ]]>
+   </select>
+   
+   <update id="updateVerify" parameterType="hashmap">
+   <![CDATA[
+         UPDATE                                 
+            TP_MEMBER SET MEM_VERIFY='Y'                           
+         WHERE MEM_EMAIL = #{MEM_EMAIL}
+      ]]>
+   </update>
+   
+   <select id="selectemail" parameterType="hashmap" resultType="hashmap">
+      <![CDATA[
+         SELECT COUNT(MEM_EMAIL)
+         FROM TP_MEMBER 
+         WHERE MEM_EMAIL = #{MEM_EMAIL}   
+      ]]>
+   </select>
+   
+   <select  id="findId" parameterType="hashmap" resultType="Integer">
+   <![CDATA[
+         SELECT  COUNT(*)
+         FROM    TP_MEMBER
+         WHERE   MEM_NAME = #{MEM_NAME}
+         AND     MEM_EMAIL = #{MEM_EMAIL}
+      ]]>
+   </select>
+   
+   <select id="selectId" parameterType="hashmap" resultType="hashmap">
+      <![CDATA[
+         SELECT
+            MEM_ID
+         FROM TP_MEMBER
+         WHERE MEM_NAME = #{MEM_NAME} AND MEM_EMAIL = #{MEM_EMAIL}   
+      ]]>
+   </select>
+   
+   <select id="findPw" parameterType="hashmap" resultType="Integer">
+      <![CDATA[
+         SELECT  COUNT(*)
+         FROM    TP_MEMBER
+         WHERE   MEM_ID = #{MEM_ID}
+         AND     MEM_EMAIL = #{MEM_EMAIL}   
+      ]]>
+   </select>
+   
+   <update id="updatePw" parameterType="String">
+      <![CDATA[
+         UPDATE                                 
+            TP_MEMBER SET MEM_PWD=#{authCode}                              
+         WHERE MEM_ID = #{MEM_ID} AND MEM_EMAIL = #{MEM_EMAIL}   
+      ]]>
+   </update>
+	
+	<insert id="insertMember" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_MEMBER											
+			(											
+				MEM_NUM,										
+				MEM_NAME,										
+				MEM_ID,										
+				MEM_PWD,										
+				MEM_EMAIL,										
+				MEM_PHONE,										
+				MEM_BAN,										
+				MEM_STACK,										
+				MEM_DATE,										
+				MEM_ADMIN										
+			)											
+				VALUES										
+			(											
+				MEM_NUM_SEQ.NEXTVAL,										
+				#{MEM_NAME},										
+				#{MEM_ID},										
+				#{MEM_PWD},										
+				#{MEM_EMAIL},										
+				#{MEM_PHONE},										
+				'N',										
+				0,										
+				SYSDATE,										
+				'M'										
+			)
+		]]>
+	</insert>
+	
+	<select id="checkId" parameterType="hashmap" resultType="Int">
+		<![CDATA[
+			SELECT COUNT(*) FROM TP_MEMBER WHERE MEM_ID=#{MEM_ID}
+		]]>
+	</select>
+	
+	<select id="selectNewShowList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM( SELECT ROW_NUMBER() OVER (ORDER BY SHOW_DATE DESC) RNUM,										
+					SHOW_NUM, SHOW_IMAGE, SHOW_NAME FROM TP_SHOW
+					WHERE SHOW_CAT=#{SHOW_CAT} AND SHOW_DEL = 'N'									
+				) AA										
+			) AAA											
+			WHERE AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	<select id="selectHotShowList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM( SELECT ROW_NUMBER() OVER (ORDER BY SHOW_RANK DESC) RNUM,										
+					SHOW_NUM, SHOW_IMAGE, SHOW_NAME FROM TP_SHOW
+					WHERE SHOW_CAT=#{SHOW_CAT} AND SHOW_DEL = 'N'									
+				) AA										
+			) AAA											
+			WHERE AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+<!-- 	<select id="selectHotShowList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM( SELECT ROW_NUMBER() OVER (ORDER BY SHOW_RANK DESC) RNUM,										
+					SHOW_IMAGE, SHOW_NAME FROM TP_SHOW
+					WHERE SHOW_CAT=#{SHOW_CAT}									
+				) AA										
+			) AAA											
+			WHERE AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select> -->
+	
+	<select id="selectBest" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+			    AA.*
+			    FROM( SELECT ROW_NUMBER() OVER (ORDER BY SHOW_RANK DESC) RNUM,
+			    	SHOW_NUM,
+			        SHOW_IMAGE,
+			        SHOW_NAME,
+			        SHOW_CAT
+			    FROM
+			        TP_SHOW
+			    WHERE
+			    	SHOW_DEL = 'N'
+			    )AA
+			WHERE
+			    AA.RNUM BETWEEN 0 AND 5
+		]]>
+	</select>
+	
+	<select id="selectSearchList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT						
+				AAA.*					
+			FROM(						
+				SELECT					
+					COUNT(*) OVER() AS TOTAL_COUNT,				
+					AA.*				
+				FROM(					
+					SELECT				
+						ROW_NUMBER() OVER (ORDER BY SHOW_DATE DESC) RNUM,			
+						SHOW_IMAGE,
+						SHOW_NAME,
+						SHOW_CAT
+				FROM
+					TP_SHOW
+				WHERE
+					SHOW_NAME LIKE '%${SHOW_NAME}%'
+				) AA					
+			) AAA						
+									
+			WHERE						
+			AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	<select id="selectShow" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT			
+				A.SHOW_NUM,								
+				A.SHOW_IMAGE,
+				A.SHOW_CAT,
+				A.SHOW_NAME,								
+				A.SHOW_PRICE,										
+				A.SHOW_DETAIL,
+				A.SHOW_OPTION1,
+				A.SHOW_OPTION2,
+				A.SHOW_DATE as ADATE,
+				A.SHOW_RANK,	
+				B.SHOWDATE_NUM,						
+				B.SHOW_DATE,										
+				B.SHOW_TIME,										
+				B.SHOW_SEAT FROM TP_SHOW A										
+				INNER JOIN TP_SHOWDATE B										
+				ON A.SHOW_NUM = B.SHOW_NUM
+			WHERE
+			    A.SHOW_NUM = #{SHOW_NUM}
+		]]>
+	</select>
+	
+	<select id="selectReviewList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY REVIEW_DATE DESC) RNUM,								
+						REVIEW_CONTENTS,								
+						REVIEW_DATE,								
+						REVIEW_SCORE,								
+						REVIEW_RES,								
+						REVIEW_ID								
+					FROM TP_REVIEW									
+					WHERE REVIEW_SHOWNUM = #{SHOW_NUM} AND REVIEW_DEL = 'N'									
+				) AA										
+			) AAA											
+			WHERE											
+				AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<select id="selectReview" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				COUNT(*) AS TOTAL_COUNT
+			FROM
+				TP_REVIEW
+			WHERE
+				REVIEW_SHOWNUM = #{SHOW_NUM} AND REVIEW_ID = #{REVIEW_ID} AND REVIEW_DEL = 'N'
+		]]>
+	</select>
+	
+	
+	<select id="checkRes" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				COUNT(*) AS TOTAL_COUNT
+			FROM
+				TP_RES
+			WHERE
+				SHOW_NUM = #{REVIEW_SHOWNUM} AND MEM_NUM = #{MEM_NUM}
+		]]>
+	</select>
+	
+	
+	<insert id="insertReview" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_REVIEW											
+			(											
+			REVIEW_SHOWNUM,											
+			REVIEW_CONTENTS,											
+			REVIEW_DATE,											
+			REVIEW_DEL,											
+			REVIEW_SCORE,											
+			REVIEW_RES,											
+			REVIEW_ID,
+			REVIEW_SHOWNAME											
+			)											
+			VALUES											
+			(											
+			#{REVIEW_SHOWNUM},											
+			#{REVIEW_CONTENTS},											
+			SYSDATE,											
+			'N',											
+			#{REVIEW_SCORE},											
+			#{REVIEW_RES},											
+			#{REVIEW_ID},
+			#{REVIEW_SHOWNAME}											
+			)		
+		]]>
+	</insert>
+	
+	
+	<update id="deleteReview" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_REVIEW											
+				SET REVIEW_DEL = 'Y'											
+			WHERE REVIEW_SHOWNUM = #{SHOW_NUM} AND REVIEW_ID = #{REVIEW_ID}
+		]]>
+	</update>
+	
+	
+	<update id="updateStack" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_MEMBER
+			SET
+				MEM_STACK = NVL(MEM_STACK, 0) + 1
+			WHERE
+				MEM_ID = #{REVIEW_ID}
+		]]>
+	</update>
+	
+	<select id="selectStack" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				MEM_STACK
+			FROM
+				TP_MEMBER
+			WHERE
+				MEM_ID = #{REVIEW_ID}
+		]]>
+	</select>
+	
+	
+	<insert id="insertLike" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_SHOWMARK											
+			(											
+			MEM_NUM,											
+			SHOW_NUM,
+			SHOW_NAME,
+			SHOW_IMAGE											
+			)											
+			VALUES											
+			(											
+			#{MEM_NUM},											
+			#{SHOW_NUM},
+			#{SHOW_NAME},
+			#{SHOW_IMAGE}											
+			)	
+		]]>
+	</insert>
+	
+	
+<!-- 	<delete id="deleteLike" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM TP_SHOWMARK											
+			WHERE MEM_NUM=#{MEM_NUM} AND SHOW_NUM = #{SHOW_NUM}
+		]]>
+	</delete> -->
+	
+	
+	<select id="selectShowQnaList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY SHOWQNA_NUM DESC, SHOWQNA_RESTEP ASC) RNUM,	
+						SHOWQNA_NUM,							
+						SHOWQNA_SHOWNUM,								
+						SHOWQNA_TITLE,								
+						SHOWQNA_ID,	
+						SHOWQNA_DATE,													
+						SHOWQNA_RESTEP								
+					FROM									
+						TP_SHOWQNA
+					WHERE
+						SHOWQNA_SHOWNUM = #{SHOWQNA_SHOWNUM}								
+				) AA										
+			) AAA											
+														
+			WHERE											
+			AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<select id="selectShowQna" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT		
+				SHOWQNA_NUM,									
+				SHOWQNA_SHOWNUM,										
+				SHOWQNA_TITLE,										
+				SHOWQNA_CONTENTS,										
+				SHOWQNA_ID,										
+				SHOWQNA_DATE,
+				SHOWQNA_RESTEP										
+			FROM											
+				TP_SHOWQNA										
+			WHERE											
+				SHOWQNA_NUM = #{SHOWQNA_NUM} AND SHOWQNA_RESTEP = #{SHOWQNA_RESTEP}	
+		]]>
+	</select>
+	
+	
+	<insert id="insertshowQna" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_SHOWQNA											
+			(			
+				SHOWQNA_NUM,								
+				SHOWQNA_SHOWNUM,										
+				SHOWQNA_TITLE,										
+				SHOWQNA_CONTENTS,										
+				SHOWQNA_ID,										
+				SHOWQNA_DATE,										
+				SHOWQNA_RESTEP,
+				SHOWQNA_CON										
+			)											
+			VALUES											
+			(			
+				SHOWQNA_NUM_SEQ.NEXTVAL,								
+				#{SHOWQNA_SHOWNUM},										
+				#{SHOWQNA_TITLE},										
+				#{SHOWQNA_CONTENTS},										
+				#{SHOWQNA_ID},										
+				SYSDATE,										
+				0,
+				'N'										
+			)		
+		]]>
+	</insert>
+	
+	
+	<update id="updateshowQna" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_SHOWQNA											
+			SET											
+				SHOWQNA_TITLE = #{SHOWQNA_TITLE},										
+				SHOWQNA_CONTENTS = #{SHOWQNA_CONTENTS}										
+			WHERE											
+				SHOWQNA_NUM = #{SHOWQNA_NUM} AND SHOWQNA_RESTEP = #{SHOWQNA_RESTEP}		
+		]]>
+	</update>
+	
+	
+	<delete id="deleteshowQna" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM TP_SHOWQNA											
+			WHERE SHOWQNA_NUM = #{SHOWQNA_NUM}	
+		]]>
+	</delete>
+	
+	
+	<insert id="insertReservation" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_RES											
+			(			
+				RES_NUM,								
+				MEM_NUM,										
+				SHOW_NUM,										
+				RES_AMOUNT,										
+				RES_TIME,										
+				RES_PRICE,										
+				RES_EXPIRE,
+				RES_DATE,										
+				RES_DEL,
+				SHOW_NAME,
+				MEM_ID										
+			)											
+			VALUES											
+			(									
+				RES_NUM_SEQ.NEXTVAL,
+				#{MEM_NUM},										
+				#{SHOW_NUM},										
+				#{RES_AMOUNT},										
+				#{RES_TIME},										
+				#{RES_PRICE},										
+				'N',
+				SYSDATE,										
+				'N',
+				#{SHOW_NAME},
+				#{MEM_ID}										
+			)			
+		]]>
+	</insert>
+	
+	<select id="selectMember" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				MEM_ID,										
+				MEM_PWD,										
+				MEM_NAME,										
+				MEM_EMAIL,										
+				MEM_PHONE										
+			FROM											
+				TP_MEMBER										
+			WHERE											
+				MEM_NUM = #{MEM_NUM}
+		]]>
+	</select>
+	
+	
+	<update id="updateMember" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_MEMBER											
+			SET																					
+				MEM_PWD = #{MEM_PWD},										
+				MEM_NAME = #{MEM_NAME},										
+				MEM_EMAIL = #{MEM_EMAIL},										
+				MEM_PHONE = #{MEM_PHONE}										
+			WHERE											
+				MEM_NUM = #{MEM_NUM}	
+		]]>
+	</update>
+	
+	
+	<delete id="deleteMember" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM TP_MEMBER											
+			WHERE MEM_NUM = #{MEM_NUM}		
+		]]>
+	</delete>
+	
+	
+	<select id="selectResList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER(ORDER BY RES_DATE DESC) RNUM,								
+						MEM_NUM,								
+						SHOW_NUM,								
+						RES_AMOUNT,								
+						RES_TIME,								
+						RES_PRICE,
+						SHOW_NAME,
+						MEM_ID								
+					FROM									
+						TP_RES								
+					WHERE									
+						MEM_NUM = #{MEM_NUM}								
+				) AA										
+			) AAA											
+			WHERE											
+			AAA.RNUM BETWEEN #{START} AND #{END}	
+		]]>
+	</select>
+	
+	
+	<update id="updateExpire" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_RES											
+			SET											
+				RES_EXPIRE = 'Y'										
+			WHERE RES_NUM = #{RES_NUM}		
+		]]>
+	</update>
+	
+	
+	<select id="selectNowResList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY RES_DATE DESC) RNUM,
+						RES_NUM,								
+						MEM_NUM,								
+						SHOW_NUM,								
+						RES_AMOUNT,								
+						RES_TIME,								
+						RES_PRICE,
+						SHOW_NAME,
+						to_char(RES_DATE,'YYYY-MM-DD') as RES_DATE							
+					FROM									
+						TP_RES								
+					WHERE									
+						MEM_NUM = #{MEM_NUM} AND RES_EXPIRE = 'N'								
+				) AA										
+			) AAA											
+														
+			WHERE											
+			AAA.RNUM BETWEEN #{START} AND #{END}	
+		]]>
+	</select>
+	
+	
+	<select id="selectPastResList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER(ORDER BY RES_DATE DESC) RNUM,	
+						RES_NUM,								
+						MEM_NUM,								
+						SHOW_NUM,								
+						RES_AMOUNT,								
+						RES_TIME,								
+						RES_PRICE,
+						SHOW_NAME,
+						to_char(RES_DATE,'YYYY-MM-DD') as RES_DATE									
+					FROM									
+						TP_RES								
+					WHERE									
+						MEM_NUM = ${MEM_NUM} AND RES_EXPIRE = 'Y'								
+				) AA										
+			) AAA											
+			WHERE											
+			AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<delete id="deleteRes" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_RES											
+			SET											
+				RES_DEL = 'Y'										
+			WHERE											
+				RES_NUM = #{RES_NUM}
+		]]>
+	</delete>
+	
+	
+	<select id="selectMyReviewList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				AAA.*
+			FROM(
+				SELECT
+					COUNT(*) OVER() AS TOTAL_COUNT,
+					AA.*
+				FROM(
+					SELECT
+						ROW_NUMBER() OVER (ORDER BY REVIEW_DATE DESC) RNUM,
+						REVIEW_SHOWNUM,
+						REVIEW_CONTENTS,
+						to_char(REVIEW_DATE,'YYYY-MM-DD') as REVIEW_DATE,
+						REVIEW_SCORE,
+						REVIEW_RES,
+						REVIEW_SHOWNAME
+					FROM
+						TP_REVIEW
+					WHERE
+						REVIEW_ID = #{REVIEW_ID} AND REVIEW_DEL = 'N'
+				) AA
+			) AAA
+			
+			WHERE
+			 AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	<select id="selectLikeList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY MEM_NUM ASC) RNUM,								
+						SHOW_NUM,
+						SHOW_NAME,
+						SHOW_IMAGE								
+					FROM									
+						TP_SHOWMARK								
+					WHERE									
+						MEM_NUM = #{MEM_NUM}								
+				) AA										
+			) AAA											
+														
+			WHERE											
+			AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	<select id="checkLike" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[								
+					SELECT																	
+						SHOW_NUM								
+					FROM									
+						TP_SHOWMARK								
+					WHERE									
+						MEM_NUM = #{MEM_NUM}								
+		]]>
+	</select>
+	
+	<select id="selectLikeInfo" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				SHOW_IMAGE,
+				SHOW_NAME,
+				SHOW_CAT			
+			FROM				
+				TP_SHOW			
+			WHERE				
+				SHOW_NUM = #{SHOW_NUM}
+		]]>
+	</select>
+	
+	
+	<delete id="deleteLike" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM TP_SHOWMARK											
+			WHERE MEM_NUM = #{MEM_NUM} AND SHOW_NUM = #{SHOW_NUM}	
+		]]>
+	</delete>
+	
+	
+	<select id="selectMyQnaList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY QNA_NUM DESC) RNUM,								
+						QNA_NUM,								
+						QNA_TITLE,								
+						QNA_ID,								
+						to_char(QNA_DATE,'YYYY-MM-DD') as QNA_DATE,
+						QNA_CONFIRM					
+					FROM									
+						TP_QNA								
+					WHERE									
+						QNA_ID = #{MEM_ID}								
+				) AA										
+			) AAA											
+														
+			WHERE											
+			AAA.RNUM BETWEEN #{START} AND #{END}	
+		]]>
+	</select>
+	
+	<select id="selectQnaDetail" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				QNA_TITLE,										
+				QNA_CONTENTS,										
+				QNA_ID,										
+				QNA_DATE,
+				QNA_NUM,
+				QNA_ADMIN										
+			FROM											
+				TP_QNA										
+			WHERE											
+				QNA_NUM = #{QNA_NUM}
+		]]>
+	</select>
+	
+	
+	<insert id="insertQna" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_QNA											
+			(											
+				QNA_NUM,										
+				QNA_TITLE,										
+				QNA_CONTENTS,										
+				QNA_ID,										
+				QNA_ANS,										
+				QNA_DATE,										
+				QNA_CONFIRM,										
+				QNA_ADMIN										
+			)											
+			VALUES											
+			(											
+				QNA_NUM_SEQ.NEXTVAL,										
+				#{QNA_TITLE},										
+				#{QNA_CONTENTS},										
+				#{QNA_ID},										
+				'N',										
+				SYSDATE,										
+				'N',										
+				'M'										
+			)
+		]]>
+	</insert>
+	
+	<update id="updateQna" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_QNA											
+			SET											
+				QNA_TITLE = #{QNA_TITLE},										
+				QNA_CONTENTS = #{QNA_CONTENTS}										
+			WHERE											
+				QNA_NUM = #{QNA_NUM}
+		]]>
+	</update>
+	
+	<delete id="deleteQna" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM TP_QNA											
+			WHERE QNA_NUM = #{QNA_NUM}
+		]]>
+	</delete>
+	
+	<select id="selectNoticeList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT	
+						ROW_NUMBER() OVER (ORDER BY NT_NUM DESC) RNUM,								
+						NT_NUM,								
+						NT_TITLE,								
+						NT_CONTENTS								
+					FROM TP_NOTICE									
+				) AA										
+			) AAA											
+			WHERE											
+				AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<select id="selectNoticeDetail" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT	
+				NT_NUM,										
+				NT_TITLE,										
+				NT_CONTENTS										
+			FROM TP_NOTICE											
+			WHERE NT_NUM = #{NT_NUM}
+		]]>
+	</select>
+	
+	<select id="selectFaqList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT	
+						ROW_NUMBER() OVER (ORDER BY FAQ_NUM DESC) RNUM,								
+						FAQ_NUM,								
+						FAQ_TITLE,								
+						FAQ_CONTENTS								
+					FROM TP_FAQ									
+				) AA										
+			) AAA											
+			WHERE											
+				AAA.RNUM BETWEEN #{START} AND #{END}	
+		]]>
+	</select>
+	
+	<select id="selectFaqDetail" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT		
+				FAQ_NUM,									
+				FAQ_TITLE,										
+				FAQ_CONTENTS										
+			FROM TP_FAQ											
+			WHERE FAQ_NUM = #{FAQ_NUM}	
+		]]>
+	</select>
+	
+	
+	<select id="selectMemberList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY MEM_NUM DESC) RNUM,	
+						MEM_NUM,							
+						MEM_ID,								
+						MEM_NAME,								
+						MEM_EMAIL,								
+						MEM_PHONE,								
+						MEM_BAN,								
+						MEM_STACK								
+					FROM TP_MEMBER									
+					WHERE									
+						MEM_ADMIN = 'M'								
+				) AA										
+			) AAA											
+			WHERE											
+				AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<select id="selectMemberSearchList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT						
+				AAA.*					
+			FROM(						
+				SELECT					
+					COUNT(*) OVER() AS TOTAL_COUNT,				
+					AA.*				
+				FROM(					
+					SELECT				
+						ROW_NUMBER() OVER (ORDER BY MEM_NUM DESC) RNUM,	
+						MEM_NUM,		
+						MEM_ID,			
+						MEM_NAME,			
+						MEM_EMAIL,			
+						MEM_PHONE,			
+						MEM_BAN,			
+						MEM_STACK			
+					FROM TP_MEMBER				
+					WHERE				
+						MEM_ID LIKE '%${MEM_ID}%' AND MEM_ADMIN = 'M'			
+				) AA					
+			) AAA						
+			WHERE						
+				AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<update id="updateMemberBan" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_MEMBER
+			SET MEM_BAN = (CASE WHEN MEM_BAN = 'N' THEN 'Y' ELSE 'N' END)
+			WHERE
+			 MEM_ID = #{MEM_ID}		
+		]]>
+	</update>
+	
+	
+	<select id="selectBanList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY MEM_NUM DESC) RNUM,
+						MEM_NUM,								
+						MEM_ID,								
+						MEM_NAME,								
+						MEM_EMAIL,								
+						MEM_PHONE,								
+						MEM_BAN,								
+						MEM_STACK								
+					FROM TP_MEMBER									
+					WHERE MEM_BAN = 'Y' AND MEM_ADMIN = 'M'									
+				) AA										
+			) AAA											
+			WHERE											
+				AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	<select id="selectBanSearchList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				AAA.*
+			FROM(
+				SELECT
+					COUNT(*) OVER() AS TOTAL_COUNT,
+					AA.*
+				FROM(
+					SELECT
+						ROW_NUMBER() OVER (ORDER BY MEM_NUM DESC) RNUM,
+						MEM_NUM,
+						MEM_ID,
+						MEM_NAME,
+						MEM_EMAIL,
+						MEM_PHONE,
+						MEM_BAN,
+						MEM_STACK
+					FROM
+						TP_MEMBER
+					WHERE
+						MEM_BAN = 'Y' AND MEM_ADMIN = 'M' AND MEM_ID LIKE '%${MEM_ID}%'
+				) AA
+			) AAA
+			
+			WHERE
+			AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<select id="selectQnaList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY QNA_NUM DESC) RNUM,
+						QNA_NUM,								
+						QNA_TITLE,								
+						QNA_ID,								
+						QNA_DATE,								
+						QNA_CONFIRM								
+					FROM TP_QNA									
+					WHERE QNA_ADMIN = 'M'									
+				) AA										
+			) AAA											
+			WHERE											
+				AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<select id="selectQnaSearchList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				AAA.*
+			FROM(
+				SELECT
+					COUNT(*) OVER() AS TOTAL_COUNT,
+					AA.*
+				FROM(
+					SELECT
+						ROW_NUMBER() OVER (ORDER BY QNA_NUM DESC) RNUM,
+						QNA_NUM,
+						QNA_TITLE,
+						QNA_CONTENTS,
+						QNA_ID,
+						to_char(QNA_DATE,'YYYY-MM-DD') as QNA_DATE,
+						QNA_CONFIRM
+					FROM
+						TP_QNA
+					WHERE
+						${COLUMN_NAME} LIKE '%${SEARCH_KEYWORD}%' AND QNA_ADMIN = 'M'
+				) AA
+			) AAA
+			
+			WHERE
+			AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	<insert id="insertReQna" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_QNA											
+			(											
+			QNA_NUM,											
+			QNA_TITLE,											
+			QNA_CONTENTS,											
+			QNA_ID,											
+			QNA_ANS,											
+			QNA_DATE,											
+			QNA_CONFIRM,											
+			QNA_ADMIN											
+			)											
+			VALUES											
+			(											
+			QNA_NUM_SEQ.NEXTVAL,											
+			#{QNA_TITLE},											
+			#{QNA_CONTENTS},											
+			#{QNA_ID},											
+			'Y',											
+			SYSDATE,											
+			'Y',											
+			'A'											
+			)	
+		]]>
+	</insert>
+	
+	
+	<update id="updateReMark" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_QNA
+			SET
+				QNA_CONFIRM = 'Y'
+			WHERE
+				QNA_NUM = #{QNA_NUM}
+		]]>
+	</update>
+	
+	
+	<select id="selectShowList" parameterType="hashmap" resultType="hashmap">
+      <![CDATA[
+         SELECT                                 
+            AAA.*                              
+         FROM(                                 
+            SELECT                              
+               COUNT(*) OVER() AS TOTAL_COUNT,                           
+               AA.*                           
+            FROM(                              
+               SELECT         
+                  ROW_NUMBER() OVER (ORDER BY SHOW_NUM DESC) RNUM,                  
+                  SHOW_NUM,                        
+                  SHOW_CAT,                        
+                  SHOW_NAME,                        
+                  SHOW_IMAGE,
+                  to_char(SHOW_DATE,'YYYY-MM-DD') as SHOW_DATE	                         
+               FROM TP_SHOW                           
+               WHERE SHOW_DEL = 'N'                           
+            ) AA                              
+         ) AAA                                 
+         WHERE                                 
+            AAA.RNUM BETWEEN #{START} AND #{END}
+      ]]>
+   </select>
+	
+	
+	<select id="selectResMemberList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,
+					SUM(RES_PRICE) OVER() AS SUM_PRICE,									
+					AA.*									
+				FROM(										
+					SELECT		
+						ROW_NUMBER() OVER (ORDER BY RES_DATE DESC) RNUM,							
+						MEM_NUM,								
+						RES_AMOUNT,								
+						RES_TIME,								
+						RES_PRICE,
+						RES_DATE,
+						MEM_ID								
+					FROM TP_RES									
+					WHERE SHOW_NUM = #{SHOW_NUM}									
+				) AA										
+			) AAA											
+			WHERE											
+				AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	
+	<insert id="insertShow" parameterType="hashmap">
+		<selectKey keyProperty="SHOW_NUM" resultType="string" order="BEFORE">
+			SELECT SHOW_NUM_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO TP_SHOW											
+			(											
+			SHOW_NUM,											
+			SHOW_CAT,											
+			SHOW_NAME,											
+			SHOW_IMAGE,											
+			SHOW_DETAIL,											
+			SHOW_PRICE,											
+			SHOW_OPTION1,											
+			SHOW_OPTION2,											
+			SHOW_SEAT,											
+			SHOW_DATE,											
+			SHOW_DEL											
+			)											
+			VALUES											
+			(											
+			#{SHOW_NUM},											
+			#{SHOW_CAT},											
+			#{SHOW_NAME},											
+			#{SHOW_IMAGE},											
+			#{SHOW_DETAIL},											
+			#{SHOW_PRICE},											
+			#{SHOW_OPTION1},											
+			#{SHOW_OPTION2},											
+			#{SHOW_SEAT},											
+			SYSDATE,											
+			'N'											
+			)		
+		]]>
+	</insert>
+	
+	
+	<insert id="insertShowDate" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_SHOWDATE											
+			(						
+			SHOWDATE_NUM,					
+			SHOW_NUM,											
+			SHOW_DATE,											
+			SHOW_TIME,											
+			SHOW_SEAT											
+			)											
+			VALUES											
+			(			
+			SHOWDATE_NUM_SEQ.NEXTVAL,								
+			#{SHOW_NUM},											
+			#{SHOW_DATE},											
+			#{SHOW_TIME},											
+			#{SHOW_SEAT}											
+			)			
+		]]>
+	</insert>
+	
+	
+	<update id="updateShow" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_SHOW											
+			SET											
+				SHOW_CAT = #{SHOW_CAT},											
+				SHOW_NAME = #{SHOW_NAME},											
+				SHOW_IMAGE = #{SHOW_IMAGE},											
+				SHOW_DETAIL = #{SHOW_DETAIL},											
+				SHOW_PRICE = #{SHOW_PRICE},											
+				SHOW_OPTION1 = #{SHOW_OPTION1},											
+				SHOW_OPTION2 = #{SHOW_OPTION2},											
+				SHOW_SEAT = #{SHOW_SEAT}											
+			WHERE SHOW_NUM = #{SHOW_NUM}	
+		]]>
+	</update>
+	
+	
+	<delete id="deleteShowDate" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM TP_SHOWDATE											
+			WHERE SHOW_NUM = #{SHOW_NUM}	
+		]]>
+	</delete>
+	
+	
+	<select id="selectshowQnaSearchList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT											
+				AAA.*										
+			FROM(											
+				SELECT										
+					COUNT(*) OVER() AS TOTAL_COUNT,									
+					AA.*									
+				FROM(										
+					SELECT									
+						ROW_NUMBER() OVER (ORDER BY SHOWQNA_NUM DESC, SHOWQNA_RESTEP ASC) RNUM,	
+						SHOWQNA_NUM,							
+						SHOWQNA_SHOWNUM,								
+						SHOWQNA_TITLE,								
+						SHOWQNA_ID,								
+						SHOWQNA_DATE,								
+						SHOWQNA_RESTEP,
+						SHOWQNA_CON								
+					FROM									
+						TP_SHOWQNA
+					WHERE
+						SHOWQNA_SHOWNUM = #{SHOWQNA_SHOWNUM} AND ${COLUMN_NAME} LIKE '%${SEARCH_KEYWORD}%'							
+				) AA										
+			) AAA											
+														
+			WHERE											
+			AAA.RNUM BETWEEN #{START} AND #{END}
+		]]>
+	</select>
+	
+	<insert id="insertReshowQna" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_SHOWQNA			
+			(	
+				SHOWQNA_NUM,		
+				SHOWQNA_SHOWNUM,		
+				SHOWQNA_TITLE,		
+				SHOWQNA_CONTENTS,		
+				SHOWQNA_ID,		
+				SHOWQNA_DATE,		
+				SHOWQNA_RESTEP,
+				SHOWQNA_CON		
+			)			
+			VALUES			
+			(			
+				#{SHOWQNA_NUM},
+				#{SHOWQNA_SHOWNUM},		
+				#{SHOWQNA_TITLE},		
+				#{SHOWQNA_CONTENTS},		
+				#{SHOWQNA_ID},		
+				SYSDATE,		
+				1,
+				'Y'		
+			)	
+		]]>
+	</insert>
+	
+	<update id="updateShowQnaConfirm" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_SHOWQNA											
+			SET											
+			SHOWQNA_CON = 'Y'																				
+			WHERE SHOWQNA_NUM = #{SHOWQNA_NUM} AND SHOWQNA_RESTEP = 0
+		]]>
+	</update>
+	
+	
+	<delete id="deleteShow" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_SHOW											
+			SET SHOW_DEL = 'Y'											
+			WHERE SHOW_NUM = #{SHOW_NUM}	
+		]]>
+	</delete>
+	
+	
+	<insert id="insertNotice" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_NOTICE
+			(
+				NT_NUM,
+				NT_TITLE,
+				NT_CONTENTS
+			)		
+			VALUES
+			(
+				NT_NUM_SEQ.NEXTVAL,
+				#{NT_TITLE},
+				#{NT_CONTENTS}
+			)			
+		]]>
+	</insert>
+	
+	
+	<update id="updateNotice" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_NOTICE											
+			SET											
+			NT_TITLE = #{NT_TITLE},											
+			NT_CONTENTS = #{NT_CONTENTS}											
+			WHERE NT_NUM = #{NT_NUM}	
+		]]>
+	</update>
+	
+	
+	<delete id="deleteNotice" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM TP_NOTICE											
+			WHERE NT_NUM = #{NT_NUM}	
+		]]>
+	</delete>
+	
+	
+	<insert id="insertFaq" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TP_FAQ
+			(
+				FAQ_NUM,
+				FAQ_TITLE,
+				FAQ_CONTENTS
+			)		
+			VALUES
+			(
+				FAQ_NUM_SEQ.NEXTVAL,
+				#{FAQ_TITLE},
+				#{FAQ_CONTENTS}
+			)		
+		]]>
+	</insert>
+	
+	<update id="updateFaq" parameterType="hashmap">
+		<![CDATA[
+			UPDATE TP_FAQ											
+			SET											
+			FAQ_TITLE = #{FAQ_TITLE},											
+			FAQ_CONTENTS = #{FAQ_CONTENTS}											
+			WHERE FAQ_NUM = #{FAQ_NUM}		
+		]]>
+	</update>
+	
+	
+	<delete id="deleteFaq" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM TP_FAQ											
+			WHERE FAQ_NUM = #{FAQ_NUM}	
+		]]>
+	</delete>
+	
+	<update id="updateSeat" parameterType="hashmap">
+      <![CDATA[
+         UPDATE TP_SHOWDATE
+         SET
+            SHOW_SEAT = #{UPDATE_SEAT}
+         WHERE
+            SHOWDATE_NUM = #{SHOWDATE_NUM}
+      ]]>
+   </update>
+   
+   <update id="updateRank" parameterType="hashmap">
+      <![CDATA[
+         UPDATE TP_SHOW
+         SET
+            SHOW_RANK = #{SHOW_RANK}
+         WHERE
+            SHOW_NUM = #{SHOW_NUM}
+      ]]>
+   </update>
+	
+</mapper>
